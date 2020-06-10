@@ -5,16 +5,12 @@
 DO_TOKEN="${DO_TOKEN:?"[ERROR] Missing DO Token"}"
 # export TF_VAR_do_token="$DO_TOKEN"
 
-exit 0 # for now
-
 docker run --name terraform --rm \
-  -v "$PWD:/data "-it \
+  -v "$PWD:/data" -it \
   -e TF_VAR_do_token="$DO_TOKEN" \
   --entrypoint "" \
   hashicorp/terraform:0.12.24 sh -c \
-  "cd /data && terraform init && \
-  terraform plan -detailed-exitcode -out=./plan.tfplan 1> ./plan.txt 2>&1 && \
-  terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt 2>&1"
+  "cd /data && terraform init && terraform plan -out=./plan.tfplan 1> ./plan.txt 2>&1 && terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt"
 
 # terraform init
 # terraform plan -detailed-exitcode -out=./plan.tfplan 1> ./plan.txt 2>&1
@@ -24,11 +20,11 @@ docker run --name terraform --rm \
 # cat ./apply.txt | tfmask | github-commenter
 # terraform apply -var="do_token=${DO_TOKEN}" -auto-approve
 
-CLUSTER_NAME="k8s-cluster"
+# CLUSTER_NAME="k8s-cluster"
 
 # save kube config with terraform output
-terraform output kube_config_raw_config > "${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"
-export KUBECONFIG="${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"
+# terraform output kube_config_raw_config > "${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"
+# export KUBECONFIG="${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"
 
 # save cluster kube config with doctl
 # doctl kubernetes cluster kubeconfig save "${CLUSTER_NAME}"
@@ -37,6 +33,7 @@ export KUBECONFIG="${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"
 # terraform refresh
 
 # terraform destroy -auto-approve
+# rm -rf .terraform/ plan.txt plan.tfplan apply.txt terraform.tfstate
 
 # set the default kube config
 # export KUBECONFIG="${HOME}/.kube/config"

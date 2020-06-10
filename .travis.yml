@@ -34,11 +34,11 @@ script:
       hashicorp/terraform:0.12.24 sh -c
       "cd /data && terraform init -backend=false && terraform validate && terraform destroy -auto-approve"
 
-# deploy:
-#   provider: script
-#   script: deploy.sh
-#   on:
-#     branch: master
+deploy:
+  provider: script
+  script: deploy.sh
+  on:
+    branch: master
 
 after_success:
   # TODO: add plan output in comment with tfmask
