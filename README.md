@@ -5,5 +5,6 @@
 > Running
 
 ```bash
-chmod +x ./deploy.sh && bash ./deploy.sh "YOUR_DIGITAL_OCEAN_TOKEN"
+export DO_TOKEN="YOUR_DIGITAL_OCEAN_TOKEN"
+chmod +x ./deploy.sh && bash ./deploy.sh
 ```
