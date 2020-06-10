@@ -16,24 +16,23 @@ env:
   # set environment
   - SHA=$(git rev-parse --short=7 HEAD)
 
-# before_install:
-#   # terraform lintet
-#   - docker image pull wata727/tflint:0.14.0
-#   - docker run --name tflint --rm -v $PWD:/data --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
-
-#   # terraform security
-#   - docker image pull wesleydeanflexion/tfsec:latest
-#   - docker run --name tfsec --rm -v "$PWD:/workdir" -it wesleydeanflexion/tfsec:latest .
-
-#   # shell linter
-#   - docker pull koalaman/shellcheck-alpine:stable
-#   - docker run --name shellcheck --rm -v $PWD:/mnt -it koalaman/shellcheck:stable ./*.sh
-
 script:
+  # terraform lintet
+  - docker run --name tflint --rm -v $PWD:/data --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
+
+  # terraform security
+  - docker run --name tfsec --rm -v "$PWD:/workdir" -it wesleydeanflexion/tfsec:latest .
+
+  # shell linter
+  - docker run --name shellcheck --rm -v $PWD:/mnt -it koalaman/shellcheck-alpine:stable shellcheck /mnt/deploy.sh
+
   # terraform validate and init
-  - docker run --name terraform --rm -v $PWD:/data -it
-      --entrypoint "" hashicorp/terraform:0.12.24
-      sh -c "cd /data && terraform init && terraform validate"
+  - docker run --name terraform --rm
+      -v $PWD:/data -it
+      -e TF_VAR_do_token="$DO_TOKEN"
+      --entrypoint ""
+      hashicorp/terraform:0.12.24 sh -c
+      "cd /data && terraform init -backend=false && terraform validate && terraform destroy -auto-approve"
 
 # deploy:
 #   provider: script
@@ -51,11 +50,10 @@ after_success:
         -e GITHUB_REPO=terraform-k8s-do
         -e GITHUB_COMMENT_TYPE=pr
         -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST
-        -e GITHUB_COMMENT_FORMAT="Comment {{.}}"
-        -e GITHUB_COMMENT="Build $SHA was successful"
+        -e GITHUB_COMMENT_FORMAT="<b>Comment</b><br/>{{.}}"
+        -e GITHUB_COMMENT="build $SHA was successful, LGTM"
         cloudposse/github-commenter:latest
-      ;
-    fi
+    ; fi
 
 after_failure:
   - if [ $TRAVIS_BRANCH == "master" ]; then echo "MASTER"; fi
@@ -66,8 +64,7 @@ after_failure:
         -e GITHUB_REPO=terraform-k8s-do
         -e GITHUB_COMMENT_TYPE=pr
         -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST
-        -e GITHUB_COMMENT_FORMAT="Comment {{.}}"
-        -e GITHUB_COMMENT="Build $SHA was not successful"
+        -e GITHUB_COMMENT_FORMAT="Comment`:`<br/>{{.}}"
+        -e GITHUB_COMMENT="build $SHA was not successful"
         cloudposse/github-commenter:latest
-      ;
-    fi
+    ; fi

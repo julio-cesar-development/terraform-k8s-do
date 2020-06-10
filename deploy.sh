@@ -3,15 +3,24 @@
 # set "$1" --
 
 DO_TOKEN="${DO_TOKEN:?"[ERROR] Missing DO Token"}"
-export TF_VAR_do_token="$DO_TOKEN"
+# export TF_VAR_do_token="$DO_TOKEN"
 
 exit 0 # for now
 
-test -d .terraform || terraform init
-terraform plan -detailed-exitcode -out=./plan.tfplan 1> ./plan.txt 2>&1
+docker run --name terraform --rm \
+  -v "$PWD:/data "-it \
+  -e TF_VAR_do_token="$DO_TOKEN" \
+  --entrypoint "" \
+  hashicorp/terraform:0.12.24 sh -c \
+  "cd /data && terraform init && \
+  terraform plan -detailed-exitcode -out=./plan.tfplan 1> ./plan.txt 2>&1 && \
+  terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt 2>&1"
+
+# terraform init
+# terraform plan -detailed-exitcode -out=./plan.tfplan 1> ./plan.txt 2>&1
 # cat ./plan.txt | tfmask | github-commenter
 
-terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt 2>&1
+# terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt 2>&1
 # cat ./apply.txt | tfmask | github-commenter
 # terraform apply -var="do_token=${DO_TOKEN}" -auto-approve
 
