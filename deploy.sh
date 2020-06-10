@@ -4,13 +4,19 @@
 
 DO_TOKEN="${DO_TOKEN:?"[ERROR] Missing DO Token"}"
 # export TF_VAR_do_token="$DO_TOKEN"
+echo "Deploying"
 
 docker run --name terraform --rm \
   -v "$PWD:/data" -it \
   -e TF_VAR_do_token="$DO_TOKEN" \
   --entrypoint "" \
   hashicorp/terraform:0.12.24 sh -c \
-  "cd /data && terraform init && terraform plan -out=./plan.tfplan 1> ./plan.txt 2>&1 && terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt"
+  "cd /data && terraform init && terraform validate && \
+  terraform plan -out=./plan.tfplan 1> ./plan.txt 2>&1 && \
+  terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt"
+
+echo "Deployed successful"
+exit 0
 
 # terraform init
 # terraform plan -detailed-exitcode -out=./plan.tfplan 1> ./plan.txt 2>&1
@@ -33,7 +39,7 @@ docker run --name terraform --rm \
 # terraform refresh
 
 # terraform destroy -auto-approve
-# rm -rf .terraform/ plan.txt plan.tfplan apply.txt terraform.tfstate
+# rm -rf .terraform/ plan.* apply.txt terraform.tfstate*
 
 # set the default kube config
 # export KUBECONFIG="${HOME}/.kube/config"

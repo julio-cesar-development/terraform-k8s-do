@@ -26,20 +26,6 @@ script:
   # shell linter
   - docker run --name shellcheck --rm -v $PWD:/mnt -it koalaman/shellcheck-alpine:stable shellcheck /mnt/deploy.sh
 
-  # terraform validate and init
-  - docker run --name terraform --rm
-      -v $PWD:/data -it
-      -e TF_VAR_do_token="$DO_TOKEN"
-      --entrypoint ""
-      hashicorp/terraform:0.12.24 sh -c
-      "cd /data && terraform init -backend=false && terraform validate && terraform destroy -auto-approve"
-
-deploy:
-  provider: script
-  script: deploy.sh
-  on:
-    branch: master
-
 after_success:
   # TODO: add plan output in comment with tfmask
   - if [ $TRAVIS_BRANCH == "master" ]; then echo "MASTER"; fi
@@ -68,3 +54,10 @@ after_failure:
         -e GITHUB_COMMENT="build $SHA was not successful"
         cloudposse/github-commenter:latest
     ; fi
+
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  skip_cleanup: true
+  on:
+    branch: master
