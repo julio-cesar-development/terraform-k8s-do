@@ -25,17 +25,3 @@ docker container run --name terraform --rm \
 echo "Deployed successful"
 
 exit 0
-
-# CLUSTER_NAME="k8s-cluster"
-
-# save kube config with terraform output
-# terraform output kube_config_raw_config > "${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"
-# export KUBECONFIG="${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"
-
-# save cluster kube config with doctl
-# doctl kubernetes cluster kubeconfig save "${CLUSTER_NAME}"
-# it will save the .yaml in the current directory with name [CLUSTER_NAME]-kubeconfig.yaml and
-# set the kubectl to work with this credential
-
-# set the default kube config
-# export KUBECONFIG="${HOME}/.kube/config"
