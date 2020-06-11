@@ -1,4 +1,4 @@
-sudo: false
+language: shell # minimal
 
 os:
 - linux
@@ -8,13 +8,14 @@ dist: bionic
 branches:
   only:
   - master
+  - development
 
 services:
   - docker
 
 env:
   # set environment
-  - SHA=$(git rev-parse --short=7 HEAD)
+  - SHA=$(git rev-parse --short=7 HEAD) CLUSTER_NAME="k8s-cluster" AWS_DEFAULT_REGION="sa-east-1"
 
 script:
   # terraform lintet
@@ -27,8 +28,6 @@ script:
   - docker run --name shellcheck --rm -v $PWD:/mnt -it koalaman/shellcheck-alpine:stable shellcheck /mnt/deploy.sh
 
 after_success:
-  # TODO: add plan output in comment with tfmask
-  - if [ $TRAVIS_BRANCH == "master" ]; then echo "MASTER"; fi
   - if [ $TRAVIS_PULL_REQUEST != "false" ]; then
       docker run -i --rm
         -e GITHUB_TOKEN=$GITHUB_TOKEN
@@ -37,12 +36,11 @@ after_success:
         -e GITHUB_COMMENT_TYPE=pr
         -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST
         -e GITHUB_COMMENT_FORMAT="<b>Comment</b><br/>{{.}}"
-        -e GITHUB_COMMENT="build $SHA was successful, LGTM"
+        -e GITHUB_COMMENT="build of commit $SHA was successful, LGTM"
         cloudposse/github-commenter:latest
     ; fi
 
 after_failure:
-  - if [ $TRAVIS_BRANCH == "master" ]; then echo "MASTER"; fi
   - if [ $TRAVIS_PULL_REQUEST != "false" ]; then
       docker run -i --rm
         -e GITHUB_TOKEN=$GITHUB_TOKEN
@@ -51,13 +49,28 @@ after_failure:
         -e GITHUB_COMMENT_TYPE=pr
         -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST
         -e GITHUB_COMMENT_FORMAT="Comment`:`<br/>{{.}}"
-        -e GITHUB_COMMENT="build $SHA was not successful"
+        -e GITHUB_COMMENT="build of commit $SHA was not successful"
         cloudposse/github-commenter:latest
     ; fi
 
 deploy:
+  on:
+    branch: master
   provider: script
   script: bash ./deploy.sh
   skip_cleanup: true
-  on:
-    branch: master
+
+after_deploy:
+  - docker container run --name awscli --rm
+      -v "$PWD:/data" -it
+      -e AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
+      -e AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+      -e AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION"
+      -e CLUSTER_NAME="$CLUSTER_NAME"
+      --entrypoint ""
+      amazon/aws-cli:2.0.20 sh -c
+      "cd /data &&
+      aws s3 cp ./plan.tfplan s3://blackdevs-aws/terraform/k8s-do/plan.tfplan &&
+      aws s3 cp ./plan.txt s3://blackdevs-aws/terraform/k8s-do/plan.txt &&
+      aws s3 cp ./apply.txt s3://blackdevs-aws/terraform/k8s-do/apply.txt &&
+      aws s3 cp ./${CLUSTER_NAME}-kubeconfig.yaml s3://blackdevs-aws/terraform/k8s-do/${CLUSTER_NAME}-kubeconfig.yaml"
