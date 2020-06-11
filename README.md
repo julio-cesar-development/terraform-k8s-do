@@ -1,6 +1,6 @@
 # Terraform K8S provisioner at Digital Ocean
 
-[![Build Status](https://badgen.net/travis/julio-cesar-development/terraform-k8s-do?icon=travis)](https://travis-ci.com/julio-cesar-development/terraform-k8s-do)
+[![Build Status](https://travis-ci.org/julio-cesar-development/terraform-k8s-do.svg)](https://travis-ci.org/julio-cesar-development/terraform-k8s-do)
 ![License](https://badgen.net/badge/license/MIT/blue)
 [![GitHub Status](https://badgen.net/github/status/julio-cesar-development/terraform-k8s-do)](https://github.com/julio-cesar-development/terraform-k8s-do)
 
@@ -18,7 +18,7 @@ export AWS_SECRET_ACCESS_KEY="AWS_SECRET_ACCESS_KEY"
 chmod +x ./deploy.sh && bash ./deploy.sh
 ```
 
-## Some Documentation
+## Some documentation
 
 - https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle
 - https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
@@ -27,3 +27,11 @@ chmod +x ./deploy.sh && bash ./deploy.sh
 - https://github.com/liamg/tfsec
 - https://github.com/cloudposse/tfmask
 - https://github.com/cloudposse/github-commenter
+
+## Authors
+
+[Julio Cesar](https://github.com/julio-cesar-development)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details

@@ -14,3 +14,9 @@ variable "do_node_count" {
   description = "Digital Ocean K8S node count"
   default     = 3
 }
+
+variable "do_node_size" {
+  type        = string
+  description = "Digital Ocean K8S node size"
+  default     = "s-2vcpu-2gb"
+}
