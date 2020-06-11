@@ -1,5 +1,9 @@
 # Terraform K8S provisioner at Digital Ocean
 
+[![Build Status](https://badgen.net/travis/julio-cesar-development/terraform-k8s-do?icon=travis)](https://travis-ci.com/julio-cesar-development/terraform-k8s-do)
+![License](https://badgen.net/badge/license/MIT/blue)
+[![GitHub Status](https://badgen.net/github/status/julio-cesar-development/terraform-k8s-do)](https://github.com/julio-cesar-development/terraform-k8s-do)
+
 ## This project will provide a K8S cluster at Digital Ocean using Terraform
 
 > It uses Travis CI to do the continuous integration and deployment
