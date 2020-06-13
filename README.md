@@ -4,7 +4,7 @@
 ![License](https://badgen.net/badge/license/MIT/blue)
 [![GitHub Status](https://badgen.net/github/status/julio-cesar-development/terraform-k8s-do)](https://github.com/julio-cesar-development/terraform-k8s-do)
 
-## This project will provide a K8S cluster at Digital Ocean using Terraform
+## This project will provide a K8S cluster at Digital Ocean using Terraform and deploy an application
 
 > It uses Travis CI to do the continuous integration and deployment
 

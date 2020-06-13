@@ -13,6 +13,17 @@
 ```bash
 CLUSTER_NAME="k8s-cluster"
 
+# format terraform (check only)
+terraform fmt -check=true -write=false -diff -recursive
+# format terraform
+terraform fmt -recursive
+
+# generate auto signed certificate
+FQDN="todoapp.ondo.blackdevs.com.br"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=$FQDN/O=$FQDN"
+mkdir -p ./certs && mv tls.key tls.crt ./certs/
+kubectl create secret tls todoapp-tls-secret --key ./certs/tls.key --cert ./certs/tls.crt --namespace default --dry-run --output yaml > ./todoapp-tls-secret.yaml
+
 # save kube config with terraform output
 terraform output kube_config_raw_config > "${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"
 export KUBECONFIG="${PWD}/${CLUSTER_NAME}-kubeconfig.yaml"

@@ -15,65 +15,80 @@ services:
 
 env:
   # set environment
-  - SHA=$(git rev-parse --short=7 HEAD) CLUSTER_NAME="k8s-cluster" AWS_DEFAULT_REGION="sa-east-1"
+  - SHA=$(git rev-parse --short=7 HEAD) CLUSTER_NAME="k8s-cluster" AWS_BUCKET_NAME="blackdevs-aws" AWS_DEFAULT_REGION="sa-east-1"
 
 script:
   - |
     # terraform linter
-    docker run --name tflint --rm -v "$PWD:/data" --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
+    docker container run --name tflint --rm -v "$PWD:/data" --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
 
     # terraform security
-    docker run --name tfsec --rm -v "$PWD:/workdir" -it wesleydeanflexion/tfsec:latest .
+    docker container run --name tfsec --rm -v "$PWD:/workdir" -it wesleydeanflexion/tfsec:latest .
 
     # shell linter
-    docker run --name shellcheck --rm -v "$PWD:/mnt" -it koalaman/shellcheck-alpine:stable shellcheck /mnt/deploy.sh
+    docker container run --name shellcheck --rm -v "$PWD:/mnt" -it koalaman/shellcheck-alpine:stable shellcheck /mnt/deploy.sh
 
 after_success:
   - |
     if [ $TRAVIS_PULL_REQUEST != "false" ]; then
-      docker run -i --rm \
-        -e GITHUB_TOKEN=$GITHUB_TOKEN \
-        -e GITHUB_OWNER=julio-cesar-development \
-        -e GITHUB_REPO=terraform-k8s-do \
-        -e GITHUB_COMMENT_TYPE=pr \
-        -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST \
-        -e GITHUB_COMMENT_FORMAT="<b>Comment</b><br/>{{.}}" \
-        -e GITHUB_COMMENT="build of commit $SHA was successful, LGTM" \
+      docker container run -i --rm \
+        --env GITHUB_TOKEN=$GITHUB_TOKEN \
+        --env GITHUB_OWNER=julio-cesar-development \
+        --env GITHUB_REPO=terraform-k8s-do \
+        --env GITHUB_COMMENT_TYPE=pr \
+        --env GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST \
+        --env GITHUB_COMMENT_FORMAT="<b>Comment</b><br/>{{.}}" \
+        --env GITHUB_COMMENT="build of commit $SHA was successful, LGTM" \
         cloudposse/github-commenter:latest
-    ; fi
+    fi
 
 after_failure:
   - |
     if [ $TRAVIS_PULL_REQUEST != "false" ]; then
-      docker run -i --rm \
-        -e GITHUB_TOKEN=$GITHUB_TOKEN \
-        -e GITHUB_OWNER=julio-cesar-development \
-        -e GITHUB_REPO=terraform-k8s-do \
-        -e GITHUB_COMMENT_TYPE=pr \
-        -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST \
-        -e GITHUB_COMMENT_FORMAT="Comment`:`<br/>{{.}}" \
-        -e GITHUB_COMMENT="build of commit $SHA was not successful" \
+      docker container run -i --rm \
+        --env GITHUB_TOKEN=$GITHUB_TOKEN \
+        --env GITHUB_OWNER=julio-cesar-development \
+        --env GITHUB_REPO=terraform-k8s-do \
+        --env GITHUB_COMMENT_TYPE=pr \
+        --env GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST \
+        --env GITHUB_COMMENT_FORMAT="<b>Comment</b><br/>{{.}}" \
+        --env GITHUB_COMMENT="build of commit $SHA was not successful" \
         cloudposse/github-commenter:latest
-    ; fi
+    fi
 
-# deploy:
-#   on:
-#     branch: master
-#   provider: script
-#   script: bash ./deploy.sh
-#   skip_cleanup: true
+deploy:
+  on:
+    branch: master
+  provider: script
+  script: |
+    docker container run --name terraform --rm \
+      -v "$PWD:/data" -it \
+      --env TF_VAR_do_token="$DO_TOKEN" \
+      --env TF_VAR_aws_root_zone_id="$AWS_ROOT_ZONE_ID" \
+      --env AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
+      --env AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
+      --env AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION" \
+      --env CLUSTER_NAME="$CLUSTER_NAME" \
+      --entrypoint "" \
+      hashicorp/terraform:0.12.24 sh -c \
+      "cd /data && terraform init -backend=true && terraform validate && \
+      terraform plan -out=./plan.tfplan 1> ./plan.txt 2>&1 && \
+      terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt && \
+      terraform output kube_config_raw_config > ./${CLUSTER_NAME}-kubeconfig.yaml"
+  skip_cleanup: true
 
-# after_deploy:
-#   - docker container run --name awscli --rm
-#       -v "$PWD:/data" -it
-#       -e AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
-#       -e AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
-#       -e AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION"
-#       -e CLUSTER_NAME="$CLUSTER_NAME"
-#       --entrypoint ""
-#       amazon/aws-cli:2.0.20 sh -c
-#       "cd /data &&
-#       aws s3 cp ./plan.tfplan s3://blackdevs-aws/terraform/k8s-do/plan.tfplan &&
-#       aws s3 cp ./plan.txt s3://blackdevs-aws/terraform/k8s-do/plan.txt &&
-#       aws s3 cp ./apply.txt s3://blackdevs-aws/terraform/k8s-do/apply.txt &&
-#       aws s3 cp ./${CLUSTER_NAME}-kubeconfig.yaml s3://blackdevs-aws/terraform/k8s-do/${CLUSTER_NAME}-kubeconfig.yaml"
+after_deploy:
+  - |
+    docker container run --name awscli --rm \
+      -v "$PWD:/data" -it \
+      --env AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
+      --env AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
+      --env AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION" \
+      --env CLUSTER_NAME="$CLUSTER_NAME" \
+      --entrypoint "" \
+      amazon/aws-cli:2.0.20 sh -c \
+      "cd /data && \
+      aws s3 cp ./plan.tfplan s3://${AWS_BUCKET_NAME}/terraform/k8s-do/plan.tfplan && \
+      aws s3 cp ./plan.txt s3://${AWS_BUCKET_NAME}/terraform/k8s-do/plan.txt && \
+      aws s3 cp ./apply.txt s3://${AWS_BUCKET_NAME}/terraform/k8s-do/apply.txt && \
+      aws s3 cp ./${CLUSTER_NAME}-kubeconfig.yaml s3://${AWS_BUCKET_NAME}/terraform/k8s-do/${CLUSTER_NAME}-kubeconfig.yaml"
