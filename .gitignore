@@ -4,3 +4,4 @@
 *kubeconfig.yaml
 *.txt
 *.tfplan
+certs/

@@ -4,7 +4,7 @@
 ![License](https://badgen.net/badge/license/MIT/blue)
 [![GitHub Status](https://badgen.net/github/status/julio-cesar-development/terraform-k8s-do)](https://github.com/julio-cesar-development/terraform-k8s-do)
 
-## This project will provide a K8S cluster at Digital Ocean using Terraform
+## This project will provide a K8S cluster at Digital Ocean using Terraform and deploy an application
 
 > It uses Travis CI to do the continuous integration and deployment
 
@@ -14,6 +14,7 @@
 export DO_TOKEN="DO_TOKEN"
 export AWS_ACCESS_KEY_ID="AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="AWS_SECRET_ACCESS_KEY"
+export AWS_ROOT_ZONE_ID="AWS_ROOT_ZONE_ID"
 
 chmod +x ./deploy.sh && bash ./deploy.sh
 ```
