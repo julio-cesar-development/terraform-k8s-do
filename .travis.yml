@@ -18,39 +18,42 @@ env:
   - SHA=$(git rev-parse --short=7 HEAD) CLUSTER_NAME="k8s-cluster" AWS_DEFAULT_REGION="sa-east-1"
 
 script:
-  # terraform lintet
-  - docker run --name tflint --rm -v "$PWD:/data" --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
+  - |
+    # terraform linter
+    docker run --name tflint --rm -v "$PWD:/data" --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
 
-  # terraform security
-  - docker run --name tfsec --rm -v "$PWD:/workdir" -it wesleydeanflexion/tfsec:latest .
+    # terraform security
+    docker run --name tfsec --rm -v "$PWD:/workdir" -it wesleydeanflexion/tfsec:latest .
 
-  # shell linter
-  - docker run --name shellcheck --rm -v "$PWD:/mnt" -it koalaman/shellcheck-alpine:stable shellcheck /mnt/deploy.sh
+    # shell linter
+    docker run --name shellcheck --rm -v "$PWD:/mnt" -it koalaman/shellcheck-alpine:stable shellcheck /mnt/deploy.sh
 
 after_success:
-  - if [ $TRAVIS_PULL_REQUEST != "false" ]; then
-    docker run -i --rm
-      -e GITHUB_TOKEN=$GITHUB_TOKEN
-      -e GITHUB_OWNER=julio-cesar-development
-      -e GITHUB_REPO=terraform-k8s-do
-      -e GITHUB_COMMENT_TYPE=pr
-      -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST
-      -e GITHUB_COMMENT_FORMAT="<b>Comment</b><br/>{{.}}"
-      -e GITHUB_COMMENT="build of commit $SHA was successful, LGTM"
-      cloudposse/github-commenter:latest
+  - |
+    if [ $TRAVIS_PULL_REQUEST != "false" ]; then
+      docker run -i --rm \
+        -e GITHUB_TOKEN=$GITHUB_TOKEN \
+        -e GITHUB_OWNER=julio-cesar-development \
+        -e GITHUB_REPO=terraform-k8s-do \
+        -e GITHUB_COMMENT_TYPE=pr \
+        -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST \
+        -e GITHUB_COMMENT_FORMAT="<b>Comment</b><br/>{{.}}" \
+        -e GITHUB_COMMENT="build of commit $SHA was successful, LGTM" \
+        cloudposse/github-commenter:latest
     ; fi
 
 after_failure:
-  - if [ $TRAVIS_PULL_REQUEST != "false" ]; then
-    docker run -i --rm
-      -e GITHUB_TOKEN=$GITHUB_TOKEN
-      -e GITHUB_OWNER=julio-cesar-development
-      -e GITHUB_REPO=terraform-k8s-do
-      -e GITHUB_COMMENT_TYPE=pr
-      -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST
-      -e GITHUB_COMMENT_FORMAT="Comment`:`<br/>{{.}}"
-      -e GITHUB_COMMENT="build of commit $SHA was not successful"
-      cloudposse/github-commenter:latest
+  - |
+    if [ $TRAVIS_PULL_REQUEST != "false" ]; then
+      docker run -i --rm \
+        -e GITHUB_TOKEN=$GITHUB_TOKEN \
+        -e GITHUB_OWNER=julio-cesar-development \
+        -e GITHUB_REPO=terraform-k8s-do \
+        -e GITHUB_COMMENT_TYPE=pr \
+        -e GITHUB_PR_ISSUE_NUMBER=$TRAVIS_PULL_REQUEST \
+        -e GITHUB_COMMENT_FORMAT="Comment`:`<br/>{{.}}" \
+        -e GITHUB_COMMENT="build of commit $SHA was not successful" \
+        cloudposse/github-commenter:latest
     ; fi
 
 # deploy:
