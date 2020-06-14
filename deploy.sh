@@ -21,8 +21,8 @@ docker container run --name terraform --rm \
   --entrypoint "" \
   hashicorp/terraform:0.12.24 sh -c \
   "cd /data && terraform init -backend=true && terraform validate && \
-  terraform plan -out=./plan.tfplan 1> ./plan.txt 2>&1 && \
-  terraform apply -auto-approve ./plan.tfplan 1> ./apply.txt && \
+  terraform plan && \
+  terraform apply -auto-approve && \
   terraform output kube_config_raw_config > ./${CLUSTER_NAME}-kubeconfig.yaml"
 
 echo "Deployed successful"

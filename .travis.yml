@@ -74,7 +74,4 @@ after_deploy:
       --entrypoint "" \
       amazon/aws-cli:2.0.20 sh -c \
       "cd /data && \
-      aws s3 cp ./plan.tfplan s3://${AWS_BUCKET_NAME}/terraform/k8s-do/plan.tfplan && \
-      aws s3 cp ./plan.txt s3://${AWS_BUCKET_NAME}/terraform/k8s-do/plan.txt && \
-      aws s3 cp ./apply.txt s3://${AWS_BUCKET_NAME}/terraform/k8s-do/apply.txt && \
       aws s3 cp ./${CLUSTER_NAME}-kubeconfig.yaml s3://${AWS_BUCKET_NAME}/terraform/k8s-do/${CLUSTER_NAME}-kubeconfig.yaml"

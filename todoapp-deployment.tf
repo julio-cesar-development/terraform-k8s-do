@@ -1,7 +1,7 @@
 resource "kubernetes_deployment" "todoapp-deployment" {
   metadata {
     name      = "todoapp-deployment"
-    namespace = "default"
+    namespace = "todoapp"
     labels = {
       component = "todoapp"
     }
@@ -63,5 +63,5 @@ resource "kubernetes_deployment" "todoapp-deployment" {
     }
   }
 
-  depends_on = [digitalocean_kubernetes_cluster.k8s-cluster]
+  depends_on = [kubernetes_namespace.todoapp-namespace]
 }

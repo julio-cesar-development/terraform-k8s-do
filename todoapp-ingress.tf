@@ -1,7 +1,7 @@
 resource "kubernetes_ingress" "todoapp-ingress" {
   metadata {
     name      = "todoapp-ingress"
-    namespace = "default"
+    namespace = "todoapp"
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
     }
@@ -29,6 +29,5 @@ resource "kubernetes_ingress" "todoapp-ingress" {
 
   wait_for_load_balancer = true
 
-  # depends_on = [null_resource.nginx-ingress-controller]
-  depends_on = [digitalocean_kubernetes_cluster.k8s-cluster]
+  depends_on = [null_resource.nginx-ingress-controller, kubernetes_namespace.todoapp-namespace]
 }

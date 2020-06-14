@@ -1,7 +1,7 @@
 resource "kubernetes_service" "todoapp-service" {
   metadata {
     name      = "todoapp-service"
-    namespace = "default"
+    namespace = "todoapp"
   }
 
   spec {
@@ -18,5 +18,5 @@ resource "kubernetes_service" "todoapp-service" {
     type = "ClusterIP"
   }
 
-  depends_on = [digitalocean_kubernetes_cluster.k8s-cluster]
+  depends_on = [kubernetes_namespace.todoapp-namespace]
 }

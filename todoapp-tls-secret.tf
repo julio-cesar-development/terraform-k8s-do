@@ -1,7 +1,7 @@
 # resource "kubernetes_secret" "todoapp-tls-secret" {
 #   metadata {
 #     name      = "todoapp-tls-secret"
-#     namespace = "default"
+#     namespace = "todoapp"
 #   }
 
 #   data = {

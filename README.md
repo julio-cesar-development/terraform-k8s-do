@@ -1,8 +1,8 @@
 # Terraform K8S provisioner at Digital Ocean
 
 [![Build Status](https://travis-ci.org/julio-cesar-development/terraform-k8s-do.svg)](https://travis-ci.org/julio-cesar-development/terraform-k8s-do)
-![License](https://badgen.net/badge/license/MIT/blue)
 [![GitHub Status](https://badgen.net/github/status/julio-cesar-development/terraform-k8s-do)](https://github.com/julio-cesar-development/terraform-k8s-do)
+![License](https://badgen.net/badge/license/MIT/blue)
 
 ## This project will provide a K8S cluster at Digital Ocean using Terraform and deploy an application
 
@@ -15,6 +15,8 @@ export DO_TOKEN="DO_TOKEN"
 export AWS_ACCESS_KEY_ID="AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="AWS_SECRET_ACCESS_KEY"
 export AWS_ROOT_ZONE_ID="AWS_ROOT_ZONE_ID"
+export AWS_DEFAULT_REGION="AWS_DEFAULT_REGION"
+export GITHUB_TOKEN="GITHUB_TOKEN"
 
 chmod +x ./deploy.sh && bash ./deploy.sh
 ```

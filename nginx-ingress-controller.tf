@@ -1,30 +1,51 @@
-# resource "local_file" "cluster-kubeconfig" {
-#   filename          = "${path.module}/kubeconfig.yaml"
-#   sensitive_content = digitalocean_kubernetes_cluster.k8s-cluster.kube_config.0.raw_config
-# }
+resource "local_file" "cluster-kubeconfig" {
+  filename          = "${path.module}/kubeconfig.yaml"
+  sensitive_content = digitalocean_kubernetes_cluster.k8s-cluster.kube_config.0.raw_config
+}
 
-# locals {
-#   nginx-ingress-manifest-body = chomp(file("${path.module}/nginx-ingress-controller.yaml"))
-# }
+resource "null_resource" "nginx-ingress-controller" {
+  provisioner "local-exec" {
+    command = <<EOF
+# download and install kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl
+chmod +x ./kubectl && mv kubectl /usr/local/bin
 
-# output "nginx-ingress-manifest" {
-#   value = local.nginx-ingress-manifest-body
-# }
+# download and install helm
+curl -LO https://get.helm.sh/helm-v3.2.0-linux-amd64.tar.gz
+tar -zxvf ./helm-v3.2.0-linux-amd64.tar.gz && \
+  mv ./linux-amd64/helm /usr/local/bin/helm && \
+  rm -rf ./linux-amd64/ && rm -f ./helm-v3.2.0-linux-amd64.tar.gz
 
-# resource "null_resource" "nginx-ingress-controller" {
-#   provisioner "local-exec" {
-#     command = <<EOF
-# curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl
-# chmod +x ./kubectl && mv kubectl /usr/local/bin
-# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-0.32.0/deploy/static/provider/aws/deploy.yaml
-# EOF
+INGRESS_INSTALLED=$(helm ls --all -n ingress-nginx 2> /dev/null | grep -ic "deployed")
 
-#     environment = {
-#       KUBECONFIG = local_file.cluster-kubeconfig.filename
-#     }
-#   }
+if [ $INGRESS_INSTALLED -eq 0 ]; then
+  # add ingress controller repo
+  helm repo add nginx-stable https://helm.nginx.com/stable
+  echo "repo added"
 
-#   depends_on = [digitalocean_kubernetes_cluster.k8s-cluster]
-# }
+  # install ingress controller
+  helm install ingress-nginx \
+    -n ingress-nginx \
+    --set controller.name="ingress-nginx" \
+    --set controller.kind=deployment \
+    --set controller.service.name=ingress-nginx \
+    nginx-stable/nginx-ingress
+  echo "release installed"
+fi
 
-# kubectl get pods,deploy,svc --all-namespaces -l app.kubernetes.io/name=ingress-nginx
+# check if ingress controller is up and running
+while [ $(kubectl get pods -n ingress-nginx -l app=ingress-nginx | grep -ic "running") -eq 0 ]; do
+  echo "waiting for ingress controller pod to be running"
+  sleep 2
+done
+
+echo "ingress controller done"
+EOF
+
+    environment = {
+      KUBECONFIG = local_file.cluster-kubeconfig.filename
+    }
+  }
+
+  depends_on = [digitalocean_kubernetes_cluster.k8s-cluster, kubernetes_namespace.ingress-nginx-namespace]
+}
