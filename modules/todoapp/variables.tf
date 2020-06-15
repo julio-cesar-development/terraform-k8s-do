@@ -29,6 +29,12 @@ variable "todoapp_subdomain" {
   default     = "ondo.blackdevs.com.br"
 }
 
+variable "todoapp_env" {
+  type        = string
+  description = "Env of app deployment"
+  default     = "production"
+}
+
 # kube config variable
 variable "kube_config_raw_config" {
   type        = any

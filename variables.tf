@@ -52,3 +52,9 @@ variable "todoapp_subdomain" {
   description = "Subdomain of app deployment"
   default     = "ondo.blackdevs.com.br"
 }
+
+variable "todoapp_env" {
+  type        = string
+  description = "Env of app deployment"
+  default     = "production"
+}

@@ -46,7 +46,7 @@ resource "kubernetes_deployment" "todoapp-deployment" {
 
           env {
             name  = "NODE_ENV"
-            value = "production"
+            value = var.todoapp_env
           }
 
           liveness_probe {
