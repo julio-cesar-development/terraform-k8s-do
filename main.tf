@@ -8,25 +8,21 @@ terraform {
   }
 }
 
-resource "digitalocean_kubernetes_cluster" "k8s-cluster" {
-  name    = "k8s-cluster"
-  region  = var.do_region
-  version = "1.16.8-do.0"
-  tags    = ["staging"]
+module "todoapp" {
+  source = "./modules/todoapp"
 
-  # see available sizes: doctl compute size list
-  node_pool {
-    name       = "worker-pool"
-    size       = var.do_node_size
-    node_count = var.do_node_count
-  }
-}
+  # AWS variables
+  aws_root_zone_id      = var.aws_root_zone_id
 
-provider "kubernetes" {
-  load_config_file = false
-  host             = digitalocean_kubernetes_cluster.k8s-cluster.endpoint
-  token            = digitalocean_kubernetes_cluster.k8s-cluster.kube_config.0.token
-  cluster_ca_certificate = base64decode(
-    digitalocean_kubernetes_cluster.k8s-cluster.kube_config.0.cluster_ca_certificate
-  )
+  # application variables
+  todoapp_replicas      = var.todoapp_replicas
+  todoapp_image_name    = var.todoapp_image_name
+  todoapp_image_version = var.todoapp_image_version
+  todoapp_subdomain     = var.todoapp_subdomain
+
+  # kube config variable
+  kube_config_raw_config = digitalocean_kubernetes_cluster.k8s-cluster.kube_config.0.raw_config
+
+  # depends on variable
+  var_depends_on = [digitalocean_kubernetes_cluster.k8s-cluster]
 }

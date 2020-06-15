@@ -3,13 +3,15 @@ resource "kubernetes_ingress" "todoapp-ingress" {
     name      = "todoapp-ingress"
     namespace = "todoapp"
     annotations = {
-      "kubernetes.io/ingress.class" = "nginx"
+      "kubernetes.io/ingress.class"                    = "nginx"
+      "nginx.ingress.kubernetes.io/ssl-redirect"       = "false"
+      "nginx.ingress.kubernetes.io/force-ssl-redirect" = "false"
     }
   }
 
   spec {
     rule {
-      host = "todoapp.${var.do_subdomain}"
+      host = "todoapp.${var.todoapp_subdomain}"
       http {
         path {
           path = "/"
@@ -22,9 +24,10 @@ resource "kubernetes_ingress" "todoapp-ingress" {
       }
     }
 
-    # tls {
-    #   secret_name = "todoapp-tls-secret"
-    # }
+    tls {
+      hosts       = ["todoapp.${var.todoapp_subdomain}"]
+      secret_name = "todoapp-tls-secret"
+    }
   }
 
   wait_for_load_balancer = true

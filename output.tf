@@ -15,9 +15,9 @@ output "endpoint" {
 }
 
 output "lb_ingress_ip" {
-  value = kubernetes_ingress.todoapp-ingress.load_balancer_ingress.0.ip
+  value = module.todoapp.lb_ingress_ip
 }
 
 output "lb_ingress_hostname" {
-  value = kubernetes_ingress.todoapp-ingress.load_balancer_ingress.0.hostname
+  value = module.todoapp.lb_ingress_hostname
 }

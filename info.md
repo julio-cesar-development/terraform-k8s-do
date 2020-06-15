@@ -33,6 +33,10 @@ doctl kubernetes cluster kubeconfig save "${CLUSTER_NAME}"
 # it will save the .yaml in the current directory with name [CLUSTER_NAME]-kubeconfig.yaml and
 # set the kubectl to work with this credential
 
+# change namespace
+CURRENT_CONTEXT=$(kubectl config view | grep "current-context" | cut -d ":" -f2 | tr -d ' ')
+kubectl config set-context "${CURRENT_CONTEXT}" --namespace=todoapp
+
 # set the default kube config
 export KUBECONFIG="${HOME}/.kube/config"
 ```

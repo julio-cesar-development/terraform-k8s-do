@@ -22,19 +22,13 @@ variable "do_node_size" {
   default     = "s-2vcpu-2gb"
 }
 
-variable "do_subdomain" {
-  type        = string
-  description = "Digital Ocean subdomain"
-  default     = "ondo.blackdevs.com.br"
-}
-
 # AWS variables
 variable "aws_root_zone_id" {
   type        = string
   description = "AWS route53 root zone id"
 }
 
-# Application variables
+# application variables (used by app module)
 variable "todoapp_replicas" {
   type        = number
   description = "Number of replicas for todoapp deployment"
@@ -51,4 +45,10 @@ variable "todoapp_image_version" {
   type        = string
   description = "Version of Docker image for todoapp deployment"
   default     = "v2.0.0"
+}
+
+variable "todoapp_subdomain" {
+  type        = string
+  description = "Subdomain of app deployment"
+  default     = "ondo.blackdevs.com.br"
 }

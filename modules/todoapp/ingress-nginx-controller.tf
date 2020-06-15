@@ -1,6 +1,6 @@
 resource "local_file" "cluster-kubeconfig" {
-  filename          = "${path.module}/kubeconfig.yaml"
-  sensitive_content = digitalocean_kubernetes_cluster.k8s-cluster.kube_config.0.raw_config
+  filename          = "${path.root}/kubeconfig.yaml"
+  sensitive_content = var.kube_config_raw_config
 }
 
 resource "null_resource" "nginx-ingress-controller" {
@@ -47,5 +47,5 @@ EOF
     }
   }
 
-  depends_on = [digitalocean_kubernetes_cluster.k8s-cluster, kubernetes_namespace.ingress-nginx-namespace]
+  depends_on = [kubernetes_namespace.ingress-nginx-namespace]
 }

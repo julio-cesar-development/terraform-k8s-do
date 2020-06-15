@@ -3,5 +3,5 @@ resource "kubernetes_namespace" "todoapp-namespace" {
     name = "todoapp"
   }
 
-  depends_on = [digitalocean_kubernetes_cluster.k8s-cluster]
+  depends_on = [var.var_depends_on]
 }

@@ -3,5 +3,5 @@ resource "kubernetes_namespace" "ingress-nginx-namespace" {
     name = "ingress-nginx"
   }
 
-  depends_on = [digitalocean_kubernetes_cluster.k8s-cluster]
+  depends_on = [var.var_depends_on]
 }
