@@ -12,13 +12,14 @@ module "todoapp" {
   source = "./modules/todoapp"
 
   # AWS variables
-  aws_root_zone_id      = var.aws_root_zone_id
+  aws_root_zone_id = var.aws_root_zone_id
 
   # application variables
   todoapp_replicas      = var.todoapp_replicas
   todoapp_image_name    = var.todoapp_image_name
   todoapp_image_version = var.todoapp_image_version
   todoapp_subdomain     = var.todoapp_subdomain
+  todoapp_env           = var.todoapp_env
 
   # kube config variable
   kube_config_raw_config = digitalocean_kubernetes_cluster.k8s-cluster.kube_config.0.raw_config
