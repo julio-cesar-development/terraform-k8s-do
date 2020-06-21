@@ -37,6 +37,9 @@ doctl kubernetes cluster kubeconfig save "${CLUSTER_NAME}"
 CURRENT_CONTEXT=$(kubectl config view | grep "current-context" | cut -d ":" -f2 | tr -d ' ')
 kubectl config set-context "${CURRENT_CONTEXT}" --namespace=todoapp
 
+# see K8S deployed objects
+kubectl get pod,deploy,svc,ingress -n todoapp
+
 # set the default kube config
 export KUBECONFIG="${HOME}/.kube/config"
 ```
