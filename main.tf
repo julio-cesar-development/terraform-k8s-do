@@ -12,7 +12,7 @@ module "todoapp" {
   source = "./modules/todoapp"
 
   # AWS variables
-  aws_root_zone_id = var.aws_root_zone_id
+  aws_hosted_zone_id = var.aws_hosted_zone_id
 
   # application variables
   todoapp_replicas      = var.todoapp_replicas

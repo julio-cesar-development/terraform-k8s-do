@@ -1,5 +1,5 @@
 # AWS variables
-variable "aws_root_zone_id" {
+variable "aws_hosted_zone_id" {
   type        = string
   description = "AWS route53 root zone id"
 }

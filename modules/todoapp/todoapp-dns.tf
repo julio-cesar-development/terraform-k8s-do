@@ -4,7 +4,7 @@ resource "aws_route53_record" "todoapp-ns-record" {
   name            = "todoapp.${var.todoapp_subdomain}"
   ttl             = 30
   type            = "NS"
-  zone_id         = var.aws_root_zone_id
+  zone_id         = var.aws_hosted_zone_id
 
   records = [
     "ns3.digitalocean.com.",

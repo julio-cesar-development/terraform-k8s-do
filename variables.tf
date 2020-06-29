@@ -23,9 +23,9 @@ variable "do_node_size" {
 }
 
 # AWS variables
-variable "aws_root_zone_id" {
+variable "aws_hosted_zone_id" {
   type        = string
-  description = "AWS route53 root zone id"
+  description = "AWS hosted zone ID"
 }
 
 # application variables (used by app module)
