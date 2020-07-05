@@ -1,11 +1,17 @@
 ## Some documentation
 
 - https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle
+
 - https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
+
 - https://www.terraform.io/docs/providers/do/r/kubernetes_cluster.html#kubernetes-terraform-provider-example
+
 - https://github.com/terraform-linters/tflint
+
 - https://github.com/liamg/tfsec
+
 - https://github.com/cloudposse/tfmask
+
 - https://github.com/cloudposse/github-commenter
 
 ## Some commands

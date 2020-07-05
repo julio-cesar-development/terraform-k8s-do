@@ -32,5 +32,5 @@ resource "kubernetes_ingress" "todoapp-ingress" {
 
   wait_for_load_balancer = true
 
-  depends_on = [null_resource.nginx-ingress-controller, kubernetes_namespace.todoapp-namespace]
+  depends_on = [null_resource.deploy_helm_apps]
 }
