@@ -18,7 +18,8 @@ export AWS_HOSTED_ZONE_ID="AWS_HOSTED_ZONE_ID"
 export AWS_DEFAULT_REGION="AWS_DEFAULT_REGION"
 export GITHUB_TOKEN="GITHUB_TOKEN"
 
-chmod +x ./deploy.sh && bash ./deploy.sh
+chmod +x ./deploy.sh && \
+    bash ./deploy.sh
 ```
 
 ## Authors

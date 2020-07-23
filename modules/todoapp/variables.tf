@@ -23,10 +23,10 @@ variable "todoapp_image_version" {
   default     = "v2.0.0"
 }
 
-variable "todoapp_subdomain" {
+variable "todoapp_domain" {
   type        = string
-  description = "Subdomain of app deployment"
-  default     = "ondo.blackdevs.com.br"
+  description = "Domain of app deployment"
+  default     = "blackdevs.com.br"
 }
 
 variable "todoapp_env" {

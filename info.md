@@ -1,18 +1,12 @@
 ## Some documentation
 
-- https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle
-
-- https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
-
-- https://www.terraform.io/docs/providers/do/r/kubernetes_cluster.html#kubernetes-terraform-provider-example
-
-- https://github.com/terraform-linters/tflint
-
-- https://github.com/liamg/tfsec
-
-- https://github.com/cloudposse/tfmask
-
-- https://github.com/cloudposse/github-commenter
+[https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle](https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle)<br>
+[https://docs.travis-ci.com/user/environment-variables/#default-environment-variables](https://docs.travis-ci.com/user/environment-variables/#default-environment-variables)<br>
+[https://www.terraform.io/docs/providers/do/r/kubernetes_cluster.html#kubernetes-terraform-provider-example](https://www.terraform.io/docs/providers/do/r/kubernetes_cluster.html#kubernetes-terraform-provider-example)<br>
+[https://github.com/terraform-linters/tflint](https://github.com/terraform-linters/tflint)<br>
+[https://github.com/liamg/tfsec](https://github.com/liamg/tfsec)<br>
+[https://github.com/cloudposse/tfmask](https://github.com/cloudposse/tfmask)<br>
+[https://github.com/cloudposse/github-commenter](https://github.com/cloudposse/github-commenter)<br>
 
 ## Some commands
 

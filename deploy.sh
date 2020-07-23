@@ -10,6 +10,24 @@ AWS_HOSTED_ZONE_ID="${AWS_HOSTED_ZONE_ID:?"[ERROR] Missing AWS hosted zone ID"}"
 
 echo "Deploying"
 
+# retrieve certificates from S3
+if [ ! -d ./certs/ ] || [ ! -f ./certs/tls.crt ] || [ ! -f ./certs/tls.key ]; then
+  mkdir -p ./certs/ && \
+  docker container run \
+      --name awscli \
+      --rm -i \
+      -v "$PWD/certs/:/data" \
+      -w /data \
+      --env AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
+      --env AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
+      --env AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION" \
+      --entrypoint "" \
+      amazon/aws-cli:2.0.20 sh -c \
+      "aws s3 cp s3://blackdevs-aws/terraform/k8s-do/todoapp.ondo/cert.pem ./tls.crt && \
+      aws s3 cp s3://blackdevs-aws/terraform/k8s-do/todoapp.ondo/privkey.pem ./tls.key"
+fi
+
+# deploy with Terraform container
 docker container run \
   --name terraform \
   --rm -it \

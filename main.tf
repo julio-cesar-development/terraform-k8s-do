@@ -1,5 +1,11 @@
 terraform {
-  required_version = "~> 0.12.0"
+  required_version = "~> 0.12.24"
+
+  required_providers {
+    digitalocean = "~> 1.22.0"
+    aws          = "~> 2.69"
+    kubernetes   = "~> 1.11"
+  }
 
   backend "s3" {
     bucket = "blackdevs-aws"
@@ -18,7 +24,7 @@ module "todoapp" {
   todoapp_replicas      = var.todoapp_replicas
   todoapp_image_name    = var.todoapp_image_name
   todoapp_image_version = var.todoapp_image_version
-  todoapp_subdomain     = var.todoapp_subdomain
+  todoapp_domain        = var.todoapp_domain
   todoapp_env           = var.todoapp_env
 
   # kube config variable

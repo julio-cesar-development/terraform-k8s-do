@@ -11,7 +11,7 @@ resource "kubernetes_ingress" "todoapp-ingress" {
 
   spec {
     rule {
-      host = "todoapp.${var.todoapp_subdomain}"
+      host = "todoapp.ondo.${var.todoapp_domain}"
       http {
         path {
           path = "/"
@@ -25,7 +25,7 @@ resource "kubernetes_ingress" "todoapp-ingress" {
     }
 
     tls {
-      hosts       = ["todoapp.${var.todoapp_subdomain}"]
+      hosts       = ["todoapp.ondo.${var.todoapp_domain}"]
       secret_name = "todoapp-tls-secret"
     }
   }
