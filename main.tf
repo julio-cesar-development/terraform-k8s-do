@@ -18,7 +18,7 @@ module "todoapp" {
   todoapp_replicas      = var.todoapp_replicas
   todoapp_image_name    = var.todoapp_image_name
   todoapp_image_version = var.todoapp_image_version
-  todoapp_subdomain     = var.todoapp_subdomain
+  todoapp_domain        = var.todoapp_domain
   todoapp_env           = var.todoapp_env
 
   # kube config variable
