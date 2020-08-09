@@ -18,5 +18,5 @@ resource "kubernetes_service" "todoapp-service" {
     type = "ClusterIP"
   }
 
-  depends_on = [kubernetes_namespace.todoapp-namespace]
+  depends_on = [kubernetes_namespace.todoapp-namespace, kubernetes_deployment.todoapp-deployment]
 }

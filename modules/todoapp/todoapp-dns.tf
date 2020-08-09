@@ -28,5 +28,5 @@ resource "digitalocean_record" "todoapp-a-record" {
   name   = "@"
   value  = kubernetes_ingress.todoapp-ingress.load_balancer_ingress.0.ip
 
-  depends_on = [digitalocean_domain.todoapp-domain-record]
+  depends_on = [digitalocean_domain.todoapp-domain-record, kubernetes_ingress.todoapp-ingress]
 }
