@@ -10,16 +10,31 @@ variable "do_region" {
   default     = "nyc1"
 }
 
-variable "do_node_count" {
+variable "do_node_instance_count" {
   type        = number
   description = "Digital Ocean K8S node count"
-  default     = 3
+  default     = 2
 }
 
-variable "do_node_size" {
+variable "do_node_instance_size" {
   type        = string
   description = "Digital Ocean K8S node size"
-  default     = "s-2vcpu-2gb"
+  default     = "s-2vcpu-4gb"
+}
+
+variable "do_autoscale_options" {
+  type        = map
+  description = "Digital Ocean auto scale options for K8S nodes"
+  default = {
+    min_nodes = 1
+    max_nodes = 3
+  }
+}
+
+variable "do_cluster_version" {
+  type        = string
+  description = "Digital Ocean K8S cluster version"
+  default     = "1.17.9-do.0"
 }
 
 # AWS variables

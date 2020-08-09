@@ -68,5 +68,10 @@ EOF
     }
   }
 
+  # trigger everytime
+  triggers = {
+    build_number = timestamp()
+  }
+
   depends_on = [kubernetes_namespace.ingress-nginx-namespace, kubernetes_namespace.cert-manager-namespace]
 }
