@@ -1,0 +1,132 @@
+helmDefaults:
+  tillerless: true
+  tillerNamespace: todoapp
+  atomic: false
+  cleanupOnFail: true
+  verify: false
+  wait: true
+  timeout: 300
+  recreatePods: false
+  force: false
+
+
+environments:
+  stage:
+    values:
+      - domain: todoapp-stage.ondo.blackdevs.com.br
+      - env: stage
+    secrets:
+      - environments/application-stage.yaml
+  prod:
+    values:
+      - domain: todoapp-prod.ondo.blackdevs.com.br
+      - env: prod
+    secrets:
+      - environments/application-prod.yaml
+
+
+repositories:
+  - name: jetstack
+    url: "https://charts.jetstack.io"
+  - name: "nginx-stable"
+    url: "https://helm.nginx.com/stable"
+  - name: "bitnami"
+    url: "https://charts.bitnami.com/bitnami"
+
+
+releases:
+  - name: nginx-ingress
+    namespace: "nginx-ingress"
+    chart: nginx-stable/nginx-ingress
+    version: "0.7.1"
+    wait: true
+    values:
+      - rbac:
+          create: true
+      - controller:
+          replicaCount: 2
+          service:
+            type: LoadBalancer
+            omitClusterIP: true
+
+  - name: cert-manager
+    namespace: "cert-manager"
+    labels:
+      chart: "cert-manager"
+      repo: "stable"
+      namespace: "cert-manager"
+      vendor: "jetstack"
+      default: "false"
+    chart: jetstack/cert-manager
+    version: "v0.15.1"
+    wait: true
+    values:
+      - fullnameOverride: cert-manager
+        installCRDs: true
+        rbac:
+          create: {{ env "RBAC_ENABLED" | default "true" }}
+        serviceAccount:
+          create: {{ env "RBAC_ENABLED" | default "true" }}
+          name: '{{ env "CERT_MANAGER_SERVICE_ACCOUNT_NAME" | default "" }}'
+        webhook:
+          enabled: false
+        cainjector:
+          enabled: true
+
+  - name: external-dns
+    namespace: "external-dns"
+    labels:
+      chart: "external-dns"
+      repo: "bitnami"
+      namespace: "external-dns"
+      vendor: "bitnami"
+      default: "false"
+    chart: bitnami/external-dns
+    version: "3.2.1"
+    wait: true
+    secrets:
+      - environments/external-dns-{{ .Values.env }}.yaml
+    values:
+      - interval: "60s"
+      - logLevel: "debug"
+      - policy: "sync"
+      - publishHostIP: "true"
+      - rbac:
+          create: "true"
+      - sources:
+        - "ingress"
+        - "service"
+
+  - name: todoapp
+    namespace: todoapp
+    chart: ./charts/todoapp
+    values:
+      - charts/todoapp/values.yaml
+      - values.yaml.gotmpl
+      - todoapp:
+          replicaCount: 1
+          namespace: todoapp
+          image:
+            tag: {{ env "TODOAPP_VERSION" | default "latest" }}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "150m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+      - ingress:
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+            external-dns.alpha.kubernetes.io/ttl: "30"
+            kubernetes.io/ingress.class: "nginx"
+            nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+            external-dns.alpha.kubernetes.io/hostname: todoapp-{{ .Values.env }}.ondo.blackdevs.com.br
+          hosts:
+            - {{ .Values.domain }}
+          tls:
+          - secretName: todoapp-tls
+            hosts:
+              - {{ .Values.domain }}
+    wait: false

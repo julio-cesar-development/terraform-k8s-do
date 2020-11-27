@@ -2,6 +2,7 @@
 .terraform
 *.tfvars
 *kubeconfig.yaml
+*kubeconfig
 *.txt
 *.tfplan
-certs/
+*.log

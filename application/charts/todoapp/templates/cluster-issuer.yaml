@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+
+metadata:
+  name: letsencrypt-prod
+
+spec:
+  acme:
+    # staging https://acme-staging-v02.api.letsencrypt.org/directory
+    # production https://acme-v02.api.letsencrypt.org/directory
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: julio@blackdevs.com.br
+
+    privateKeySecretRef:
+      name: letsencrypt-prod
+
+    # this is issuer uses HTTP for certificate generation
+    solvers:
+    - dns01:
+        digitalocean:
+          tokenSecretRef:
+            name: digitalocean-dns
+            key: access-token

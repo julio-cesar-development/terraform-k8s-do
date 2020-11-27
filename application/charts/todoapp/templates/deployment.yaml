@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todoapp-deployment
+  namespace: {{ .Values.todoapp.namespace }}
+
+spec:
+  replicas: {{ .Values.todoapp.replicaCount }}
+  selector:
+    matchLabels:
+      component: todoapp
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 3
+
+  template:
+    metadata:
+      labels:
+        component: todoapp
+
+    spec:
+      containers:
+        - name: todoapp-deployment
+          image: "{{ .Values.todoapp.image.repository }}:{{ .Values.todoapp.image.tag }}"
+          imagePullPolicy: {{ .Values.todoapp.image.imagePullPolicy }}
+          ports:
+            - name: todoapp-port
+              containerPort: {{ .Values.todoapp.containerPort }}
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: todoapp-port
+            initialDelaySeconds: 10
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: todoapp-port
+            initialDelaySeconds: 10
+            timeoutSeconds: 30
+
+          env:
+            {{- range $key, $val := .Values.todoapp.secrets }}
+            - name: {{ $key }}
+              value: {{ $val }}
+            {{- end}}
+
+          resources:
+            {{- toYaml .Values.todoapp.resources | nindent 12 }}
+
+      restartPolicy: Always
