@@ -23,7 +23,7 @@ todoapp:
 ingress:
   enabled: true
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
     external-dns.alpha.kubernetes.io/ttl: "30"
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"

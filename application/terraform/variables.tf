@@ -1,6 +1,6 @@
 variable "kubeconfig_content" {
   type        = string
-  description = "Kubeconfig content"
+  description = "Kubeconfig Content"
 }
 
 variable "env" {
@@ -9,14 +9,8 @@ variable "env" {
   description = "Env"
 }
 
-variable "todoapp_node_env" {
-  type        = string
-  default     = "production"
-  description = "Todoapp Node Env"
-}
-
-variable "todoapp_version" {
+variable "app_version" {
   type        = string
   default     = "latest"
-  description = "Todoapp Version"
+  description = "Version"
 }

@@ -3,6 +3,7 @@ terraform {
 
   required_providers {
     null = "~> 3.0.0"
+    aws  = "~> 2.69"
   }
 }
 
@@ -28,20 +29,15 @@ if [ $(helm plugin list | grep "secrets" | wc -l) -eq 0 ]; then
   helm plugin install https://github.com/zendesk/helm-secrets --version v2.0.2 1> /dev/null 2>&1
 fi
 
-# deploy (references to application folder)
+# deploy (references to module folder)
 cd ../
-ls -ltha
-helmfile \
-  --environment $ENVIRONMENT \
-  --file helmfile.yaml \
-  sync
+helmfile --log-level=debug --environment $ENVIRONMENT sync
 EOF
 
     environment = {
       KUBECONFIG_FILENAME = local_file.cluster_kubeconfig.filename
       ENVIRONMENT         = var.env
-      NODE_ENV            = var.todoapp_node_env
-      TODOAPP_VERSION     = var.todoapp_version
+      APP_VERSION         = var.app_version
     }
   }
 }

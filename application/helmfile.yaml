@@ -15,12 +15,14 @@ environments:
     values:
       - domain: todoapp-stage.ondo.blackdevs.com.br
       - env: stage
+      - acmeServer: https://acme-staging-v02.api.letsencrypt.org/directory
     secrets:
       - environments/application-stage.yaml
   prod:
     values:
       - domain: todoapp-prod.ondo.blackdevs.com.br
       - env: prod
+      - acmeServer: https://acme-v02.api.letsencrypt.org/directory
     secrets:
       - environments/application-prod.yaml
 
@@ -103,11 +105,12 @@ releases:
     values:
       - charts/todoapp/values.yaml
       - values.yaml.gotmpl
+      - acmeServer: {{ .Values.acmeServer }}
       - todoapp:
           replicaCount: 1
           namespace: todoapp
           image:
-            tag: {{ env "TODOAPP_VERSION" | default "latest" }}
+            tag: {{ env "APP_VERSION" | default "latest" }}
           resources:
             requests:
               memory: "128Mi"
@@ -117,7 +120,7 @@ releases:
               cpu: "300m"
       - ingress:
           annotations:
-            cert-manager.io/cluster-issuer: letsencrypt-prod
+            cert-manager.io/cluster-issuer: letsencrypt-issuer
             external-dns.alpha.kubernetes.io/ttl: "30"
             kubernetes.io/ingress.class: "nginx"
             nginx.ingress.kubernetes.io/from-to-www-redirect: "true"

@@ -3,10 +3,10 @@
 set -e
 
 declare -x CLUSTER_NAME
+CLUSTER_NAME="${CLUSTER_NAME:-"k8s-cluster"}"
+
 declare -x KUBECONFIG
 declare -x KUBECONFIG_CONTENT
-
-CLUSTER_NAME="${CLUSTER_NAME:-"k8s-cluster"}"
 
 pushd infrastructure/ && \
   bash deploy.sh
