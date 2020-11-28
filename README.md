@@ -8,18 +8,22 @@
 
 > It uses Travis CI to do the continuous integration and deployment
 
-## Instructions
+## Instructions for K8S infrastructure
 
 ```bash
 export DO_TOKEN="DO_TOKEN"
 export AWS_ACCESS_KEY_ID="AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="AWS_SECRET_ACCESS_KEY"
-export AWS_HOSTED_ZONE_ID="AWS_HOSTED_ZONE_ID"
 export AWS_DEFAULT_REGION="AWS_DEFAULT_REGION"
-export GITHUB_TOKEN="GITHUB_TOKEN"
+export SOPS_KMS_ARN="SOPS_KMS_ARN"
 
-chmod +x ./deploy.sh && \
-    bash ./deploy.sh
+bash deploy.sh
+
+unset DO_TOKEN
+unset AWS_ACCESS_KEY_ID
+unset AWS_SECRET_ACCESS_KEY
+unset AWS_DEFAULT_REGION
+unset SOPS_KMS_ARN
 ```
 
 ## Authors

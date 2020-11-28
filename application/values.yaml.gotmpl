@@ -1,0 +1,7 @@
+todoapp:
+  secrets:
+    NODE_ENV: {{ .Values.todoapp.secrets.NODE_ENV | quote }}
+
+digitalocean:
+  secrets:
+    apiToken: {{ .Values.digitalocean.secrets.apiToken | quote }}

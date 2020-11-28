@@ -13,11 +13,3 @@ output "kube_config_token" {
 output "endpoint" {
   value = digitalocean_kubernetes_cluster.k8s-cluster.endpoint
 }
-
-output "lb_ingress_ip" {
-  value = module.todoapp.lb_ingress_ip
-}
-
-output "lb_ingress_hostname" {
-  value = module.todoapp.lb_ingress_hostname
-}

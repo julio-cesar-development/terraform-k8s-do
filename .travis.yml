@@ -20,13 +20,20 @@ env:
 script:
   - |
     # terraform linter
-    docker container run --name tflint --rm -v "$PWD:/data" -w /data --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
+    docker container run --name tflint --rm -v "$PWD/infrastructure:/data" -w /data --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
+    docker container run --name tflint --rm -v "$PWD/application:/data" -w /data --entrypoint "" -it wata727/tflint:0.14.0 tflint ./
 
     # terraform security
-    docker container run --name tfsec --rm -v "$PWD:/workdir" -w /workdir --user 1000 -it wesleydeanflexion/tfsec:latest .
+    docker container run --name tfsec --rm -v "$PWD/infrastructure:/data" -w /data --user 1000 -it wesleydeanflexion/tfsec:latest .
+    docker container run --name tfsec --rm -v "$PWD/application:/data" -w /data --user 1000 -it wesleydeanflexion/tfsec:latest .
 
     # shell linter
-    docker container run --name shellcheck --rm -v "$PWD:/mnt" -w /mnt -it koalaman/shellcheck-alpine:stable shellcheck deploy.sh
+    docker container run --name shellcheck \
+      --rm -v "$PWD:/data" \
+      -w /data -it koalaman/shellcheck-alpine:stable \
+      sh -c "shellcheck deploy.sh && \
+        shellcheck infrastructure/deploy.sh && \
+        shellcheck application/deploy.sh"
 
 after_success:
   - |
@@ -74,27 +81,27 @@ after_failure:
         -d "@payload.json"
     fi
 
-deploy:
-  on:
-    branch: master
-  provider: script
-  script: bash ./deploy.sh
-  skip_cleanup: true
+# deploy:
+#   on:
+#     branch: master
+#   provider: script
+#   script: bash ./deploy.sh
+#   skip_cleanup: true
 
-after_deploy:
-  - |
-    docker container run \
-      --name awscli \
-      --rm -it \
-      -v "$PWD:/data" \
-      -w /data \
-      --env AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
-      --env AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
-      --env AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION" \
-      --env CLUSTER_NAME="$CLUSTER_NAME" \
-      --entrypoint "" \
-      amazon/aws-cli:2.0.20 sh -c \
-      "aws s3 cp ./plan.tfplan s3://${AWS_BUCKET_NAME}/terraform/k8s-do/plan.tfplan && \
-      aws s3 cp ./plan.txt s3://${AWS_BUCKET_NAME}/terraform/k8s-do/plan.txt && \
-      aws s3 cp ./apply.txt s3://${AWS_BUCKET_NAME}/terraform/k8s-do/apply.txt && \
-      aws s3 cp ./${CLUSTER_NAME}-kubeconfig.yaml s3://${AWS_BUCKET_NAME}/terraform/k8s-do/${CLUSTER_NAME}-kubeconfig.yaml"
+# after_deploy:
+#   - |
+#     docker container run \
+#       --name awscli \
+#       --rm -it \
+#       -v "$PWD/infrastructure:/data" \
+#       -w /data \
+#       --env AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
+#       --env AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
+#       --env AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION" \
+#       --env CLUSTER_NAME="$CLUSTER_NAME" \
+#       --entrypoint "" \
+#       amazon/aws-cli:2.0.20 sh -c \
+#       "aws s3 cp ./plan.tfplan s3://${AWS_BUCKET_NAME}/terraform/k8s-do/plan.tfplan && \
+#       aws s3 cp ./plan.txt s3://${AWS_BUCKET_NAME}/terraform/k8s-do/plan.txt && \
+#       aws s3 cp ./apply.txt s3://${AWS_BUCKET_NAME}/terraform/k8s-do/apply.txt && \
+#       aws s3 cp ./${CLUSTER_NAME}-kubeconfig.yaml s3://${AWS_BUCKET_NAME}/terraform/k8s-do/${CLUSTER_NAME}-kubeconfig.yaml"
