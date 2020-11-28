@@ -1,20 +1,20 @@
 todoapp:
     secrets:
-        NODE_ENV: ENC[AES256_GCM,data:GWAG61LpkTllsA==,iv:RMtvqLqArZP8FLC6e+AZCcAQ4kmypVWn8RaXwzT/pPU=,tag:YFQC90AlaTQ3YVlVnksviw==,type:str]
+        NODE_ENV: ENC[AES256_GCM,data:FhQV4qA=,iv:Hwx06mlp+WL3mPmVYLoJLMb7puOF+ITUOkdFyOx7AbM=,tag:6B5QHH1MRWVYr+JtjHFNiQ==,type:str]
 digitalocean:
     secrets:
-        apiToken: ENC[AES256_GCM,data:K/LIyuWDrpzX9lM4vJHKUvef8PJ4PQNBKIuiHZ8pw1U9mtEv0whu6vrRJALzUaxKNow7GKLSoQAUIxi1EVRRkQ==,iv:tBzyyL9t7tPet/r5lA2CHHmjpnhKvPMzEKTqtG3leiM=,tag:Xh4QS35eDFVBvCaqYQcL0Q==,type:str]
+        apiToken: ENC[AES256_GCM,data:IILuogFuP+wvtAw0L7XEVxtht0O687Tjxkztr3yhNyeBy1mS9TdbZcic3oFxn8XHt/17JiyzAsqM11SU5Y2XCw==,iv:4aVHuVbaRDvBHVS7Rr2dq2/yrJ8igZImTBrYD3sAWFI=,tag:u0QPxvi/43/PbvCTfQ/qqA==,type:str]
 sops:
     kms:
     -   arn: arn:aws:kms:sa-east-1:829560024531:key/8c7bb497-873b-438d-a825-0526713496b8
-        created_at: '2020-11-27T04:06:23Z'
-        enc: AQICAHhLagC2ioliXud9AogMJA/s1tkWk6BJnr1lnGuDz6q4zwG68MInE32joTKlx+X+nvPKAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMyA73r5b7kU6uwc7gAgEQgDtoTDClQLNdNJ7WBmkJv7/GG5qmba0SbofWv5qPthCL9qqOlyLyOTBYiV1qK1F0ttt/jvv6PCYcQEC/Jw==
+        created_at: '2020-11-28T03:56:25Z'
+        enc: AQICAHhLagC2ioliXud9AogMJA/s1tkWk6BJnr1lnGuDz6q4zwHXKyhZqR/HjB6XGXRFvwsoAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM+PUbYx9+Gb49cf/FAgEQgDvMIl0hWr7VMNs7w+Cx7WsRcARqbDw4EPoIMGJOsD15FYHEQxEYThMIZZ6BSgrnArA9cziMgnGeAOfihA==
         aws_profile: ""
     gcp_kms: []
     azure_kv: []
     hc_vault: []
-    lastmodified: '2020-11-27T04:06:23Z'
-    mac: ENC[AES256_GCM,data:bFQBOJq0Ah+CduCbkoWhoIjSPUXMfuMpxM8mISJhmrD4Nthz2l1rbSm1yc6RcQx5r8n8zv5f46dkk3bnDdf0sirhgLj7wpEmQJrLGnk9/KW5hvjMrRpak1/xVCv8i1G3WbwlsIxVLrpRdejlElbbezXU5skThtIA9C7SeoGiwsI=,iv:5mxnuyG10MdUzTln/M8713GdJWA/vpmBgDA6hCin/IM=,tag:JsmKv4fFpeeNkIKum89rKg==,type:str]
+    lastmodified: '2020-11-28T03:56:26Z'
+    mac: ENC[AES256_GCM,data:S5c9CAStt3F8hcMl3AKmd0TU0fC6kwPF9KqMIJXh2/2vaJ5EAbtEIraOz7dVBWehWFYbKExcDqInHwskXjxufDd/c5qU70qcMzxU8Rm+sGAFeY6gJCe961anlk/Rx6W+s0RBjX3AkcZHZQ9GrPZ8PU6ygPmAemr1oOe8E1mFZdU=,iv:mDWKlOV+CUXtD+YtlA0kYg5XW1gmaMjp46GYdPJrhMI=,tag:MWIFzMuiC5Rsq+AuYXr+jA==,type:str]
     pgp: []
     unencrypted_suffix: _unencrypted
     version: 3.6.0

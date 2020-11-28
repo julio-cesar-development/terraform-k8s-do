@@ -24,14 +24,13 @@ docker container run \
   --env AWS_SECRET_ACCESS_KEY \
   --env AWS_DEFAULT_REGION \
   --entrypoint "" \
-  hashicorp/terraform:0.12.26 sh -c \
-  "apk update && apk add --no-cache curl && \
-  cd terraform/ && \
-  terraform init -backend=true && \
-  terraform validate && \
-  terraform plan -out=./plan.tfplan | tee ./plan.txt && \
-  terraform apply -auto-approve ./plan.tfplan | tee ./apply.txt && \
-  terraform output kube_config_raw_config > ./${CLUSTER_NAME}-kubeconfig.yaml"
+  cloudposse/geodesic:0.133.0 sh -c \
+  "cd terraform/ && \
+    terraform init -backend=true && \
+    terraform validate && \
+    terraform plan -out=./plan.tfplan | tee ./plan.txt && \
+    terraform apply -auto-approve ./plan.tfplan | tee ./apply.txt && \
+    terraform output kube_config_raw_config > ./${CLUSTER_NAME}-kubeconfig.yaml"
 
 echo "[INFO] Infrastructure deployed successfully"
 

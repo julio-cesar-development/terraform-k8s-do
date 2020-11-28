@@ -2,19 +2,16 @@ apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 
 metadata:
-  name: letsencrypt-prod
+  name: letsencrypt-issuer
 
 spec:
   acme:
-    # staging https://acme-staging-v02.api.letsencrypt.org/directory
-    # production https://acme-v02.api.letsencrypt.org/directory
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    server: {{ .Values.acmeServer }}
     email: julio@blackdevs.com.br
 
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: letsencrypt-issuer
 
-    # this is issuer uses HTTP for certificate generation
     solvers:
     - dns01:
         digitalocean:
